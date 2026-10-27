@@ -1,0 +1,62 @@
+{
+  "name": "unkillable",
+  "version": "1.0.0",
+  "description": "Reliable, Standard Webhooks–compliant webhook delivery on nothing but Postgres.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "author": "Ashwin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiwaker9404/unkillable"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "dev": "node --watch src/main.ts all",
+    "start": "node src/main.ts all",
+    "start:api": "node src/main.ts api",
+    "start:worker": "node src/main.ts worker",
+    "migrate": "node src/main.ts migrate",
+    "receiver": "node examples/receiver.ts",
+    "dashboard:dev": "vite --config dashboard/vite.config.ts",
+    "dashboard:build": "vite build --config dashboard/vite.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p dashboard/tsconfig.json",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run test/unit test/integration",
+    "test:unit": "vitest run test/unit",
+    "test:integration": "vitest run test/integration",
+    "test:chaos": "vitest run test/chaos",
+    "bench": "node bench/bench.ts"
+  },
+  "dependencies": {
+    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/static": "^10.1.8",
+    "@fastify/swagger": "^9.9.2",
+    "@fastify/swagger-ui": "^6.1.2",
+    "@prometheus-io/client": "^0.16.1",
+    "fastify": "^5.12.7",
+    "fastify-type-provider-zod": "^7.0.0",
+    "pino": "^10.4.0",
+    "postgres": "^3.4.9",
+    "undici": "^8.12.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.3",
+    "@tanstack/react-query": "^5.105.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "pino-pretty": "^13.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
