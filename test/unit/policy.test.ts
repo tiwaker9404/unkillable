@@ -44,7 +44,11 @@ describe('scripted model applies the refund policy', () => {
     const text = scriptedModel({
       messages: [
         { role: 'system', content: REPLY_SYSTEM },
-        { role: 'user', content: 'Ticket T-9 about order o (Desk).\nOutcome: refund. Refunded: $12.00. Reason: ok.' },
+        {
+          role: 'user',
+          content:
+            'Ticket T-9 about order o (Desk).\nOutcome: refund. Refunded: $12.00. Reason: ok.',
+        },
       ],
     })
     expect(text).toContain('$12.00')
@@ -72,7 +76,11 @@ describe('sandbox honors idempotency keys', () => {
       expect(a.id).toBe(b.id)
       await post() // no key: a second, real refund
       const s = sb.stats().refunds
-      expect(s).toMatchObject({ applied: 2, deduplicatedByIdempotencyKey: 1, subjectsAffectedMoreThanOnce: 1 })
+      expect(s).toMatchObject({
+        applied: 2,
+        deduplicatedByIdempotencyKey: 1,
+        subjectsAffectedMoreThanOnce: 1,
+      })
     } finally {
       await sb.close()
     }

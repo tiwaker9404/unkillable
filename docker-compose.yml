@@ -1,0 +1,74 @@
+# docker compose up --build
+#   dashboard + API  http://localhost:8080
+#   API docs         http://localhost:8080/docs
+# Scale workers and kill them to watch runs survive:
+#   docker compose up -d --scale worker=3
+#   docker compose kill worker
+name: unkillable
+
+x-app: &app
+  build: .
+  environment: &env
+    DATABASE_URL: postgres://postgres:postgres@postgres:5432/unkillable
+    SANDBOX_URL: http://sandbox:4000
+    # LLM: the sandbox serves a free, deterministic OpenAI-compatible model.
+    # For a real local model: LLM_BASE_URL=http://ollama:11434/v1 LLM_MODEL=qwen2.5:7b (profile "ollama")
+    LLM_PROVIDER: openai
+    LLM_BASE_URL: http://sandbox:4000/v1
+    LLM_MODEL: scripted-v1
+    API_KEYS: ${API_KEYS:-}
+    APPROVAL_THRESHOLD_CENTS: "30000"
+    LOG_LEVEL: info
+  depends_on:
+    postgres: { condition: service_healthy }
+    migrate: { condition: service_completed_successfully }
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: unkillable
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      retries: 30
+
+  migrate:
+    build: .
+    command: ["node", "src/main.ts", "migrate"]
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/unkillable
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  sandbox:
+    build: .
+    command: ["node", "src/sandbox/server.ts"]
+    environment:
+      SANDBOX_HOST: 0.0.0.0
+      SANDBOX_PORT: "4000"
+    ports: ["4000:4000"]
+
+  api:
+    <<: *app
+    command: ["node", "src/main.ts", "api"]
+    ports: ["8080:8080"]
+
+  worker:
+    <<: *app
+    command: ["node", "src/main.ts", "worker"]
+    healthcheck: { disable: true }
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    ports: ["11434:11434"]
+    volumes: [ollama:/root/.ollama]
+
+volumes:
+  pgdata:
+  ollama:

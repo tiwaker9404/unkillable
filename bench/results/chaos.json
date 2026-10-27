@@ -1,0 +1,66 @@
+[
+  {
+    "mode": "naive",
+    "runs": 200,
+    "succeeded": 200,
+    "failed": 0,
+    "unfinished": 0,
+    "elapsedSeconds": 61.8,
+    "workerKills": {
+      "external": 60,
+      "selfAfterSideEffect": 64
+    },
+    "executions": 1369,
+    "runsThatSurvivedACrash": 179,
+    "refunds": {
+      "applied": 411,
+      "orders": 94,
+      "doubleRefundedOrders": 83,
+      "extraDollars": 75239.9,
+      "deduplicated": 0
+    },
+    "emails": {
+      "sent": 267,
+      "customersEmailedTwice": 53
+    },
+    "crmDuplicateNotes": 187,
+    "duplicatesAbsorbed": 0,
+    "llm": {
+      "calls": 1847,
+      "tokens": 386441,
+      "callsPerRun": 9.24
+    }
+  },
+  {
+    "mode": "durable",
+    "runs": 200,
+    "succeeded": 200,
+    "failed": 0,
+    "unfinished": 0,
+    "elapsedSeconds": 35.4,
+    "workerKills": {
+      "external": 34,
+      "selfAfterSideEffect": 31
+    },
+    "executions": 798,
+    "runsThatSurvivedACrash": 192,
+    "refunds": {
+      "applied": 94,
+      "orders": 94,
+      "doubleRefundedOrders": 0,
+      "extraDollars": 0,
+      "deduplicated": 32
+    },
+    "emails": {
+      "sent": 200,
+      "customersEmailedTwice": 0
+    },
+    "crmDuplicateNotes": 0,
+    "duplicatesAbsorbed": 166,
+    "llm": {
+      "calls": 708,
+      "tokens": 131512,
+      "callsPerRun": 3.54
+    }
+  }
+]

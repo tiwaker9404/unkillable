@@ -73,7 +73,9 @@ export async function buildApi({ sql, cfg, log, agents }: ApiDeps) {
     loggerInstance: log,
     logController: new LogController({
       disableRequestLogging: (req) =>
-        req.url === '/healthz' || req.url === '/readyz' || req.url === '/metrics' ||
+        req.url === '/healthz' ||
+        req.url === '/readyz' ||
+        req.url === '/metrics' ||
         (cfg.LOG_LEVEL !== 'debug' && cfg.LOG_LEVEL !== 'trace'),
     }),
     bodyLimit: 1024 * 1024,
@@ -400,7 +402,7 @@ export async function buildApi({ sql, cfg, log, agents }: ApiDeps) {
 
   const dist = join(import.meta.dirname, '../../dashboard/dist')
   if (existsSync(dist)) {
-    await app.register(fastifyStatic, { root: dist, prefix: '/', wildcard: false })
+    await app.register(fastifyStatic, { root: dist, prefix: '/' })
     app.setNotFoundHandler((req, reply) => {
       if (req.method === 'GET' && !req.url.startsWith('/v1/')) return reply.sendFile('index.html')
       reply.status(404).send({ error: { code: 'not_found', message: 'route not found' } })

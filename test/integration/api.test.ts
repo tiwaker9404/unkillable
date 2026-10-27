@@ -32,7 +32,9 @@ const ticket = {
 describe('API', () => {
   it('requires a valid API key on /v1', async () => {
     expect((await app.inject({ url: '/v1/runs' })).statusCode).toBe(401)
-    expect((await app.inject({ url: '/v1/runs', headers: { authorization: 'Bearer nope' } })).statusCode).toBe(401)
+    expect(
+      (await app.inject({ url: '/v1/runs', headers: { authorization: 'Bearer nope' } })).statusCode,
+    ).toBe(401)
     expect((await app.inject({ url: '/v1/runs', headers: auth })).statusCode).toBe(200)
     expect((await app.inject({ url: '/healthz' })).statusCode).toBe(200)
   })
@@ -87,7 +89,12 @@ describe('API', () => {
     expect(list.json().nextCursor).toBeTruthy()
 
     const detail = await app.inject({ url: `/v1/runs/${id}`, headers: auth })
-    expect(detail.json()).toMatchObject({ id, status: 'queued', steps: [], savings: { replayedSteps: 0 } })
+    expect(detail.json()).toMatchObject({
+      id,
+      status: 'queued',
+      steps: [],
+      savings: { replayedSteps: 0 },
+    })
     expect((await app.inject({ url: '/v1/runs/not-an-id', headers: auth })).statusCode).toBe(400)
 
     const ev = await app.inject({
@@ -99,9 +106,20 @@ describe('API', () => {
     expect(ev.statusCode).toBe(202)
     expect(ev.json().woke).toBe(false) // not waiting on it yet; it will be consumed when it is
 
-    expect((await app.inject({ method: 'POST', url: `/v1/runs/${id}/cancel`, headers: auth })).statusCode).toBe(200)
-    expect((await app.inject({ method: 'POST', url: `/v1/runs/${id}/cancel`, headers: auth })).statusCode).toBe(409)
-    const retried = await app.inject({ method: 'POST', url: `/v1/runs/${id}/retry`, headers: auth, payload: {} })
+    expect(
+      (await app.inject({ method: 'POST', url: `/v1/runs/${id}/cancel`, headers: auth }))
+        .statusCode,
+    ).toBe(200)
+    expect(
+      (await app.inject({ method: 'POST', url: `/v1/runs/${id}/cancel`, headers: auth }))
+        .statusCode,
+    ).toBe(409)
+    const retried = await app.inject({
+      method: 'POST',
+      url: `/v1/runs/${id}/retry`,
+      headers: auth,
+      payload: {},
+    })
     expect(retried.json().status).toBe('queued')
   })
 
@@ -112,7 +130,12 @@ describe('API', () => {
     expect(metrics.body).toContain('unkillable_runs')
     const spec = await app.inject({ url: '/docs/json' })
     expect(Object.keys(spec.json().paths)).toEqual(
-      expect.arrayContaining(['/v1/runs', '/v1/runs/{id}', '/v1/runs/{id}/events', '/v1/runs/{id}/retry']),
+      expect.arrayContaining([
+        '/v1/runs',
+        '/v1/runs/{id}',
+        '/v1/runs/{id}/events',
+        '/v1/runs/{id}/retry',
+      ]),
     )
   })
 })

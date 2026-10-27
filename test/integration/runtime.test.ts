@@ -42,7 +42,11 @@ afterEach(async () => {
   await Promise.all(workers.splice(0).map((w) => w.stop(1000)))
 })
 
-async function startWorker(agents: AgentRegistry, llm = new FakeLlm(() => 'ok'), cfg = testConfig()) {
+async function startWorker(
+  agents: AgentRegistry,
+  llm = new FakeLlm(() => 'ok'),
+  cfg = testConfig(),
+) {
   const w = new Worker(sql, cfg, log, agents, llm)
   await w.start()
   workers.push(w)
@@ -77,7 +81,11 @@ describe('happy path', () => {
     const run = await waitForStatus(sql, id, ['succeeded'])
 
     // step output is JSON-normalized on the first execution, exactly as replay would return it
-    expect(run.output).toEqual({ a: { n: 2, at: '1970-01-01T00:00:00.000Z' }, plan: { ok: true }, charge: { id: 'ch_1' } })
+    expect(run.output).toEqual({
+      a: { n: 2, at: '1970-01-01T00:00:00.000Z' },
+      plan: { ok: true },
+      charge: { id: 'ch_1' },
+    })
     const steps = await getSteps(sql, id)
     expect(steps.map((s) => [s.seq, s.key, s.kind, s.status])).toEqual([
       [0, 'load', 'step', 'completed'],
@@ -192,7 +200,11 @@ describe('determinism guard', () => {
       },
     })
     const id = await start('shifty')
-    const w = await startWorker(reg(agent as never), undefined, testConfig({ RETRY_BASE_MS: '2000' }))
+    const w = await startWorker(
+      reg(agent as never),
+      undefined,
+      testConfig({ RETRY_BASE_MS: '2000' }),
+    )
     await sleep(500)
     await w.stop(500)
     version = 2
@@ -261,7 +273,9 @@ describe('durable waits', () => {
       name: 'approver',
       async run(ctx) {
         await ctx.llm('draft', { messages: [{ role: 'user', content: 'x' }] })
-        const ev = await ctx.waitForEvent<{ ok: boolean }>('approval', 'approve', { timeoutMs: 60_000 })
+        const ev = await ctx.waitForEvent<{ ok: boolean }>('approval', 'approve', {
+          timeoutMs: 60_000,
+        })
         return ev?.payload
       },
     })
@@ -338,10 +352,14 @@ describe('retries and failure handling', () => {
       name: 'outage',
       async run(ctx) {
         await ctx.step('expensive', async () => ++expensive)
-        await ctx.step('downstream', async () => {
-          if (failures++ < 4) throw new Error('downstream down')
-          return 'up'
-        }, { retries: 0 })
+        await ctx.step(
+          'downstream',
+          async () => {
+            if (failures++ < 4) throw new Error('downstream down')
+            return 'up'
+          },
+          { retries: 0 },
+        )
         return 'done'
       },
     })

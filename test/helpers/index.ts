@@ -3,7 +3,7 @@ import { type Config, loadConfig } from '../../src/config.ts'
 import { connect, migrate, type Sql } from '../../src/db/index.ts'
 import type { LlmProvider, LlmRequest, LlmResponse } from '../../src/llm/types.ts'
 import { createLogger } from '../../src/logger.ts'
-import { type Run, type RunStatus, getRun } from '../../src/runtime/store.ts'
+import { getRun, type Run, type RunStatus } from '../../src/runtime/store.ts'
 
 export const TEST_DB = process.env.TEST_DATABASE_URL!
 export const log = createLogger('silent', 'test')

@@ -1,0 +1,7 @@
+node_modules
+dashboard/dist
+.git
+bench/results
+docs
+*.log
+.env
