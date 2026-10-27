@@ -1,7 +1,7 @@
 {
   "name": "unkillable",
   "version": "1.0.0",
-  "description": "Reliable, Standard Webhooks–compliant webhook delivery on nothing but Postgres.",
+  "description": "Crash-proof AI agents on Postgres: checkpointed steps, exactly-once side effects, human approvals.",
   "license": "MIT",
   "type": "module",
   "private": true,
@@ -20,7 +20,6 @@
     "start:api": "node src/main.ts api",
     "start:worker": "node src/main.ts worker",
     "migrate": "node src/main.ts migrate",
-    "receiver": "node examples/receiver.ts",
     "dashboard:dev": "vite --config dashboard/vite.config.ts",
     "dashboard:build": "vite build --config dashboard/vite.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p dashboard/tsconfig.json",
@@ -30,7 +29,8 @@
     "test:unit": "vitest run test/unit",
     "test:integration": "vitest run test/integration",
     "test:chaos": "vitest run test/chaos",
-    "bench": "node bench/bench.ts"
+    "bench": "node bench/chaos.ts",
+    "sandbox": "node src/sandbox/server.ts"
   },
   "dependencies": {
     "@fastify/rate-limit": "^11.2.1",
@@ -57,5 +57,13 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
-  }
+  },
+  "keywords": [
+    "ai-agents",
+    "durable-execution",
+    "postgres",
+    "llm",
+    "idempotency",
+    "workflow"
+  ]
 }
